@@ -38,4 +38,16 @@ sudo chown -R "$NEW_USER:$NEW_USER" "/home/$NEW_USER"
 # Add the user to the sudo group for admin privileges
 sudo usermod -aG sudo "$NEW_USER"
 
-echo "User '$NEW_USER' created, password set, added to sudo group, and environment configured."
+# --- Ensure the docker group exists and add the new user ---
+# Check if the docker group exists and create it if it does not exist
+if ! getent group docker > /dev/null; then
+    echo "Info: 'docker' group does not exist. Creating it..."
+    sudo groupadd docker
+    echo "'docker' group created."
+fi
+
+# Add the new user to the docker group
+sudo usermod -aG docker "$NEW_USER"
+echo "User '$NEW_USER' added to 'docker' group."
+
+echo "User '$NEW_USER' created, password set, added to sudo\docker group, and environment configured."
